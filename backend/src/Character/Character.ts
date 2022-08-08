@@ -8,9 +8,9 @@ const SPELL_SLOTS = 6 as const;
 const PLAYER_STRING_BUFFER = Buffer.from("PLAYER", "utf-8");
 
 export class Character implements BasicStats, LvlStats, SkillSet {
-    private modifiedBuffer: Buffer;
+    private buffer: Buffer;
     private offsets: BufferOffsets;
-    private name: string;
+    name: string;
 
     // BasicStats
     level = 0;
@@ -64,7 +64,6 @@ export class Character implements BasicStats, LvlStats, SkillSet {
     vitality = 0;
     magic = 0;
 
-
     // Extra BasicStats
     walkingSpeed: number;
     runningSpeed: number;
@@ -72,7 +71,7 @@ export class Character implements BasicStats, LvlStats, SkillSet {
 
     constructor(buff: Buffer) {
         let stringSize: number;
-        this.modifiedBuffer = buff.subarray(0, buff.length);
+        this.buffer = buff.subarray(0, buff.length);
 
         // initial offset
         let offset = buff.indexOf(PLAYER_STRING_BUFFER) + PLAYER_STRING_BUFFER.length;
@@ -145,40 +144,40 @@ export class Character implements BasicStats, LvlStats, SkillSet {
         let offset = 0;
         for (let key of keys) {
             if (BasicStatsDataType[key] == DataType.int32) {
-                this[key] = this.modifiedBuffer.readInt32LE(this.offsets[key]);
+                this[key] = this.buffer.readInt32LE(this.offsets[key]);
             }
             else { // float
-                this[key] = this.modifiedBuffer.readFloatLE(this.offsets[key]);
+                this[key] = this.buffer.readFloatLE(this.offsets[key]);
             }
             offset = this.offsets[key];
         }
         return offset;
     }
 
-    update(newValues: { name?: string, basic?: Partial<BasicStats>, skills?: Partial<SkillSet>, stats?: Partial<LvlStats> }) {
-        if (this.name)
-            this.updateName(newValues.name);
+    update(data: { name?: string, basic?: Partial<BasicStats>, skills?: Partial<SkillSet>, stats?: Partial<LvlStats> }) {
+        if (data.name)
+            this.updateName(data.name);
 
-        if (newValues.basic)
-            this.updateBasicStats(newValues.basic);
+        if (data.basic)
+            this.updateBasicStats(data.basic);
 
-        if (newValues.skills)
-            this.updateSkills(newValues.skills);
+        if (data.skills)
+            this.updateSkills(data.skills);
 
-        if (newValues.basic)
-            this.updateStats(newValues.stats);
+        if (data.basic)
+            this.updateStats(data.stats);
     }
 
     updateName(name: string) {
         //update buffer
-        const prevChunk = this.modifiedBuffer.subarray(0, this.offsets.name - 2);
-        const nextChunk = this.modifiedBuffer.subarray(this.offsets.name + this.name.length, this.modifiedBuffer.length);
+        const prevChunk = this.buffer.subarray(0, this.offsets.name - 2);
+        const nextChunk = this.buffer.subarray(this.offsets.name + this.name.length, this.buffer.length);
         let newNameBuffer = Buffer.alloc(2 + name.length);
         newNameBuffer.writeUint32LE(name.length); //write length
         newNameBuffer.write(name, 2, "utf-8"); // offset 2 bytes for length
 
         // concat everything
-        this.modifiedBuffer = Buffer.concat([prevChunk, newNameBuffer, nextChunk]);
+        this.buffer = Buffer.concat([prevChunk, newNameBuffer, nextChunk]);
 
         // get diff and update offsets
         const diff = name.length - this.name.length;
@@ -193,10 +192,10 @@ export class Character implements BasicStats, LvlStats, SkillSet {
         for (key in newValues) {
             this[key] = newValues[key];
             if (BasicStatsDataType[key] == DataType.int32) {
-                this.modifiedBuffer.writeInt32LE(this[key], this.offsets[key]);
+                this.buffer.writeInt32LE(this[key], this.offsets[key]);
             }
             else { // float
-                this.modifiedBuffer.writeFloatLE(this[key], this.offsets[key]);
+                this.buffer.writeFloatLE(this[key], this.offsets[key]);
             }
         }
     }
@@ -207,7 +206,7 @@ export class Character implements BasicStats, LvlStats, SkillSet {
             const key = SkillSetKeys[i];
             if (newSkills[key]) {
                 this[key] = newSkills[key];
-                this.modifiedBuffer.writeInt32LE(this[key], this.offsets.skills + 4 * i);
+                this.buffer.writeInt32LE(this[key], this.offsets.skills + 4 * i);
             }
         }
     }
@@ -217,13 +216,21 @@ export class Character implements BasicStats, LvlStats, SkillSet {
             const key = LvlStatKeys[i];
             if (newStats[key]) {
                 this[key] = newStats[key];
-                this.modifiedBuffer.writeInt32LE(this[key], this.offsets[key]);
+                this.buffer.writeInt32LE(this[key], this.offsets[key]);
             }
         }
     }
 
+    toJson() {
+        const serialize = JSON.parse(JSON.stringify(this));
+        delete serialize.buffer
+        delete serialize.offsets
+        serialize.buffer = this.buffer.toString('base64');
+        return serialize;
+    }
+
     getNewBuffer() {
-        return this.modifiedBuffer;
+        return this.buffer;
     }
 
 }

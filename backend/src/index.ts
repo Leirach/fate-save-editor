@@ -1,26 +1,11 @@
-import fs from 'fs/promises'
-import { Character } from './Character/Character';
+import express from 'express';
+import { SaveFileRouter } from './API/SaveFileHandler';
 
-async function readData(path: string) {
-    const buff = await fs.readFile(path);
-    const character = new Character(buff);
-    console.log(character)
+const app = express();
+const port = process.env.PORT || 3000;
 
-    // character.updateSkills({skillCriticalStrike: 64});
-    // character.updateName("Guille");
-    // character.updateStats({strength: 99, dexterity: 99})
-    character.update({
-        name: "Guille2",
-        skills: { skillCriticalStrike: 80 },
-        stats: { strength: 80, dexterity: 110 },
-        basic: { gold: 100000000 }
-    })
-    // console.log(character)
+app.use(SaveFileRouter);
 
-    await fs.writeFile('modified.FFD', character.getNewBuffer());
-
-    const newchar = new Character(await fs.readFile('modified.FFD'))
-    console.log("new", newchar)
-}
-
-readData('./2.FFD');
+app.listen(port, () => {
+    console.log(`API listening on port: ${port}`);
+});
