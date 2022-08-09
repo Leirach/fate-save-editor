@@ -164,7 +164,7 @@ export class Character implements BasicStats, LvlStats, SkillSet {
         if (data.skills)
             this.updateSkills(data.skills);
 
-        if (data.basic)
+        if (data.stats)
             this.updateStats(data.stats);
     }
 

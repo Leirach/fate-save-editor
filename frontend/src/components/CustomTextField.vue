@@ -1,12 +1,15 @@
 <template>
-    <v-text-field v-bind="{ ...$attrs, ...$props }" type="number" class="custom-text">
+    <!-- need to re emit update:model-value for some reason -->
+    <v-text-field v-bind="$attrs, $props" type="number" class="custom-text"
+        @update:model-value="$emit('update:modelValue', $event)">
         <div class="buttons">
             <button v-on:mousedown="press('minus')" v-on:mouseup="release('minus')" v-on:click="click('minus')"
                 :disabled="disableMinus">
                 <img :src="minusImg[minusIdx]">
             </button>
-            <img :src="plusImg[plusIdx]" v-on:mousedown="press('plus')" v-on:mouseup="release('plus')"
-                v-on:click="click('plus')">
+            <button v-on:mousedown="press('plus')" v-on:mouseup="release('plus')" v-on:click="click('plus')">
+                <img :src="plusImg[plusIdx]">
+            </button>
         </div>
     </v-text-field>
 </template>
@@ -25,7 +28,10 @@ export default defineComponent({
     props: ['type', 'key', 'model'],
     extends: VTextField,
     created: function () {
-
+        if (this.$props.modelValue <= 0) {
+            this.disableMinus = true;
+            this.minusIdx = 2;
+        }
     },
     data: function () {
         return {
@@ -36,18 +42,13 @@ export default defineComponent({
             disableMinus: false
         }
     },
-    model: {
-        prop: 'value',
-        event: 'input'
-    },
     methods: {
         press: function (type: 'minus' | 'plus') {
             if (type === 'minus') this.minusIdx = 1;
             else this.plusIdx = 1;
         },
         release: function (type: 'minus' | 'plus') {
-            if (type === 'minus')
-                this.minusIdx = 0;
+            if (type === 'minus') this.minusIdx = 0;
             else this.plusIdx = 0;
         },
         click: function (type: 'minus' | 'plus') {
@@ -58,7 +59,6 @@ export default defineComponent({
     emits: ['++', '--'],
     watch: {
         '$props.modelValue': function (value) {
-            console.log(value)
             if (value <= 0) {
                 this.disableMinus = true;
                 this.minusIdx = 2;
@@ -79,6 +79,18 @@ export default defineComponent({
 
 .buttons {
     cursor: pointer !important;
+    position: relative;
+    top: -5px;
+    height: 24px;
+}
+
+.buttons button {
+    height: 100%;
+    margin-right: 5px;
+}
+
+.buttons img {
+    max-height: 100%;
 }
 
 input[type="number"] {

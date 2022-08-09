@@ -15,12 +15,13 @@
           </v-card-text>
           <v-card-item>
             <v-file-input label="Fate .FFD save file" prepend-icon="mdi-file" accept=".FFD" class="cursor"
-              v-model="saveFile" v-on:change="fileChange">
+              v-model="saveFile" v-on:change="fileChange" hide-details="auto">
             </v-file-input>
           </v-card-item>
+          <v-card-actions v-if="displayForm" class="justify-center">
+            <v-btn @click="saveChanges" variant="elevated" color="primary">Save & download</v-btn>
+          </v-card-actions>
         </v-card>
-        <custom-button v-model="testvalue" v-on:change="testFunc" v-on:++="testvalue++"
-          v-on:--="testvalue--"></custom-button>
       </v-col>
       <v-col cols="12">
         <CharacterForm v-if="displayForm"></CharacterForm>
@@ -33,7 +34,6 @@
 import { CharacterApiService } from '@/services/Character.service';
 import { defineComponent } from 'vue'
 import CharacterForm from './CharacterForm.vue';
-import CustomButton from './CustomButton.vue';
 
 export default defineComponent({
   methods: {
@@ -51,8 +51,27 @@ export default defineComponent({
         console.error(e);
       }
     },
-    testFunc: function () {
-      console.log("ay yo")
+    saveChanges: async function () {
+      if (!this.saveFile[0]) {
+        return;
+      }
+      try {
+        const res = await this.characterService.modifyCharacter();
+        console.log(res);
+        const blob = new Blob([res], { type: 'application/octet-stream' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        // the filename you want
+        a.download = 'modified.FFD';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+      catch (e) {
+        console.error(e);
+      }
     }
   },
   data: function () {
@@ -64,7 +83,7 @@ export default defineComponent({
       testvalue: 10
     };
   },
-  components: { CharacterForm, CustomButton }
+  components: { CharacterForm }
 })
 </script>
 

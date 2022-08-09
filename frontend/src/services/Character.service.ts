@@ -77,9 +77,11 @@ export class CharacterApiService {
         }
 
         const res = await axios.post(this.API_URL + '/savefile/modify', updateData, {
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json" },
+            responseType: 'blob'
         });
 
-        console.log(res.data);
+        console.log(res);
+        return res.data;
     }
 }

@@ -9,12 +9,12 @@ async function readData(path: string) {
     // character.updateSkills({skillCriticalStrike: 64});
     // character.updateName("Guille");
     // character.updateStats({strength: 99, dexterity: 99})
-    character.update({
-        name: "Guille2",
-        skills: { skillCriticalStrike: 80 },
-        stats: { strength: 80, dexterity: 110 },
-        basic: { gold: 100000000 }
-    })
+    // character.update({
+    //     name: "Guille2",
+    //     skills: { skillCriticalStrike: 80 },
+    //     stats: { strength: 80, dexterity: 110 },
+    //     basic: { gold: 100000000 }
+    // })
     // console.log(character)
 
     await fs.writeFile('modified.FFD', character.getNewBuffer());
@@ -23,4 +23,4 @@ async function readData(path: string) {
     console.log("new", newchar)
 }
 
-readData('./2.FFD');
+readData('../../2.FFD');
