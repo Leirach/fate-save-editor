@@ -4,9 +4,6 @@ import { IUpdateParams } from '../Character/IUpdateParams';
 
 export const SaveFileRouter = express.Router();
 
-interface SaveFileModify {
-
-}
 SaveFileRouter.post('/savefile/parse', express.raw({ limit: '300kb' }),
     (req: express.Request, res: express.Response) => {
         const buff = req.body as Buffer;
@@ -18,6 +15,7 @@ SaveFileRouter.post('/savefile/parse', express.raw({ limit: '300kb' }),
 interface SaveFileModify extends IUpdateParams {
     buffer: string;
 }
+
 SaveFileRouter.post('/savefile/modify', express.json({ limit: '300kb' }),
     (req: express.Request, res: express.Response) => {
         const body = req.body as SaveFileModify;
