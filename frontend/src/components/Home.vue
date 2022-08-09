@@ -56,6 +56,9 @@ export default defineComponent({
         return;
       }
       try {
+        if (this.characterService.characterData.unusedSkillPoints < 0) {
+          this.characterService.characterData.unusedSkillPoints = 0;
+        }
         const res = await this.characterService.modifyCharacter();
         console.log(res);
         const blob = new Blob([res], { type: 'application/octet-stream' });
