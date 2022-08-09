@@ -21,3 +21,27 @@ export interface BasicStats {
     runningSpeed: number;
     gold: number;
 }
+
+export const BasicStatKeys: (keyof BasicStats)[] = [
+    "level",
+    "experience",
+    "hp",
+    "maxHp",
+    "fame",
+    "fameRank",
+    "stamina",
+    "maxStamina",
+    "mana",
+    "maxMana",
+    "toHitBonus",
+    "originalToHitBonus",
+    "naturalArmor",
+    "originalNaturalArmor",
+    "experienceAward",
+    "fameAward",
+    "unusedStatPoints",
+    "unusedSkillPoints",
+    "walkingSpeed",
+    "runningSpeed",
+    "gold"
+];
