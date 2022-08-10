@@ -22,7 +22,7 @@ export class CharacterApiService {
         return this.instance;
     }
 
-    private API_URL = 'http://localhost:3000';
+    private API_URL = import.meta.env.VITE_API_URL;
 
     originalData!: ICharacter;
     characterData!: ICharacter;
