@@ -1,5 +1,5 @@
 {
-  "name": "fate-save-editor",
+  "name": "fate-save-editor-frontend",
   "version": "0.0.0",
   "scripts": {
     "serve": "vite preview",

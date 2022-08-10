@@ -204,7 +204,7 @@ export class Character implements BasicStats, LvlStats, SkillSet {
         // need i for calculating skill offset
         for (let i = 0; i < SkillSetKeys.length; i++) {
             const key = SkillSetKeys[i];
-            if (newSkills[key]) {
+            if (newSkills[key] !== undefined) {
                 this[key] = newSkills[key];
                 this.buffer.writeInt32LE(this[key], this.offsets.skills + 4 * i);
             }
@@ -214,7 +214,7 @@ export class Character implements BasicStats, LvlStats, SkillSet {
     updateStats(newStats: Partial<LvlStats>) {
         for (let i = 0; i < LvlStatKeys.length; i++) {
             const key = LvlStatKeys[i];
-            if (newStats[key]) {
+            if (newStats[key] !== undefined) {
                 this[key] = newStats[key];
                 this.buffer.writeInt32LE(this[key], this.offsets[key]);
             }

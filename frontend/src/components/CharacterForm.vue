@@ -53,7 +53,6 @@ export default defineComponent({
             this.character.unusedSkillPoints++;
         },
         updateUnused(key: keyof SkillSet) {
-            console.log(key, "updating lmao")
             this.character.unusedSkillPoints += this.original[key] - this.character[key]
         }
     },

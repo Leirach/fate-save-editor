@@ -1,0 +1,26 @@
+{
+  "name": "fate-save-editor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "build": "npm run build-frontend && npm run build-backend",
+    "build-frontend": "NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --prefix ./frontend  && npm run build --prefix ./frontend",
+    "build-backend": "NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --prefix ./backend && npm run build --prefix ./backend",
+    "heroku-cleanup": "npm prune --production --prefix ./backend && npm prune --production --prefix ./frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Leirach/fate-save-editor.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Leirach/fate-save-editor/issues"
+  },
+  "homepage": "https://github.com/Leirach/fate-save-editor#readme",
+  "engines": {
+    "node": "16.x"
+  }
+}
