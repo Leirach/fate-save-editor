@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <Home></Home>
+      <Home class="fill-height"></Home>
     </v-main>
   </v-app>
 </template>
@@ -14,9 +14,9 @@ export default defineComponent({
   name: 'Fate Save Editor',
   components: {
     Home
-},
+  },
 
-  data () {
+  data() {
     return {
       //
     }
