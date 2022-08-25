@@ -2,27 +2,44 @@ import { Character } from '../Character/Character';
 import express from 'express';
 import { IUpdateParams } from '../Character/IUpdateParams';
 import fs from 'fs/promises';
+import { GameVersion } from '../Character/GameVersion';
+
+const VersionMap: { [key: string]: GameVersion } = {
+    "original": GameVersion.FATE,
+    "traitorsoul": GameVersion.FATE_TRAITOR_SOUL
+}
 
 export const SaveFileRouter = express.Router();
 
-SaveFileRouter.post('/savefile/parse', express.raw({ limit: '500kb' }),
+SaveFileRouter.post('/savefile/:game/parse', express.raw({ limit: '500kb' }),
     (req: express.Request, res: express.Response) => {
+        const version = VersionMap[req.params.game];
+        if (!version) {
+            return res.send(404);
+        }
+
         const buff = req.body as Buffer;
-        const parsedCharacter = new Character(buff);
+        const parsedCharacter = new Character(buff, version);
 
         res.send(parsedCharacter.toJson());
     });
 
-interface SaveFileModify extends IUpdateParams {
+
+interface SaveFileModifyRequest extends IUpdateParams {
     buffer: string;
 }
 
-SaveFileRouter.post('/savefile/modify', express.json({ limit: '500kb' }),
+SaveFileRouter.post('/savefile/:game/modify', express.json({ limit: '500kb' }),
     (req: express.Request, res: express.Response) => {
-        const body = req.body as SaveFileModify;
+        const version = VersionMap[req.params.game];
+        if (!version) {
+            return res.send(404);
+        }
+
+        const body = req.body as SaveFileModifyRequest;
 
         const buff = Buffer.from(body.buffer, 'base64');
-        const character = new Character(buff);
+        const character = new Character(buff, version);
 
         character.update(body); // compatible :D
 
@@ -32,7 +49,7 @@ SaveFileRouter.post('/savefile/modify', express.json({ limit: '500kb' }),
 SaveFileRouter.get('/savefile/demo', express.json({ limit: '500kb' }),
     async (req: express.Request, res: express.Response) => {
         const buff = await fs.readFile('./assets/demo.FFD');
-        const parsedCharacter = new Character(buff);
+        const parsedCharacter = new Character(buff, GameVersion.FATE);
 
         res.send(parsedCharacter.toJson());
     });

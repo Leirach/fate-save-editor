@@ -22,3 +22,8 @@ export const FAME_RANKS = [
     "Demigod",
     "Unattainable"
 ];
+
+export const APIVersion = {
+    ORIG: "original",
+    TRAITOR_SOUL: "traitorsoul"
+};

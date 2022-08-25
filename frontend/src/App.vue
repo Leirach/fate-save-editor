@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <Home class="fill-height"></Home>
+      <Home></Home>
     </v-main>
   </v-app>
 </template>

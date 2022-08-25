@@ -1,6 +1,6 @@
 <template>
   <div class="header d-flex justify-center">
-    <img class="img-container" src="@/assets/logo.png">
+    <img class="img-container" :src="selectedImg[characterService.gameVersion]">
   </div>
   <v-container fluid>
     <div class="d-flex flex-column align-center">
@@ -8,10 +8,19 @@
       <v-col cols="12" md="6">
         <v-card elevation="2" class="custom-card">
           <v-card-title>Save File Editor</v-card-title>
+          <v-btn-toggle v-if="!displayForm" class="d-flex justify-center" color="primary"
+            v-model="characterService.gameVersion" mandatory>
+            <v-btn value="original">
+              FATE (original)
+            </v-btn>
+            <v-btn value="traitorsoul">
+              FATE: The Traitor Soul
+            </v-btn>
+          </v-btn-toggle>
           <v-card-text v-if="!displayForm">
             Upload your FATE save file below to get started. <br>
             If you are playing on Steam you can find them at: <br>
-            <code>C:\Program Files (x86)\Steam\userdata\YOUR-STEAM-ID\246840\remote\SAVE\en-US</code>
+            <code>C:\Program Files (x86)\Steam\userdata\YOUR-STEAM-ID\{{gameVersionId[characterService.gameVersion]}}\remote\SAVE\en-US</code>
             Alternatively, <v-btn size="small" variant="text" class="ps-1" @click="loadEmpty">load an empty file</v-btn>
           </v-card-text>
           <v-card-item>
@@ -26,24 +35,27 @@
 
       </v-col>
       <v-col cols="12" class="text-center">
-        <v-progress-circular v-if="characterService.loading" :size="50" :width="7" color="primary" indeterminate></v-progress-circular>
+        <v-progress-circular v-if="characterService.loading" :size="50" :width="7" color="primary" indeterminate>
+        </v-progress-circular>
         <CharacterForm v-if="displayForm"></CharacterForm>
       </v-col>
     </div>
   </v-container>
-  <v-footer> hello world</v-footer>
 </template>
 
 <script lang="ts">
 import { CharacterApiService } from '@/services/Character.service';
+import { APIVersion } from '@/services/constants';
 import { defineComponent } from 'vue';
 import CharacterForm from './CharacterForm.vue';
+import logo_original from '@/assets/logo.png';
+import logo_tts from '@/assets/logo_tts.png';
 
 export default defineComponent({
   methods: {
     loadEmpty: async function () {
       await this.characterService.getCharacterData();
-      this.saveFile[0] = {name: 'demo.FFD'} as File;
+      this.saveFile[0] = { name: 'demo.FFD' } as File;
       this.displayForm = true;
     },
     fileChange: async function () {
@@ -93,7 +105,14 @@ export default defineComponent({
       characterService: CharacterApiService.getInstance(),
       displayForm: false,
       saveFile,
-      testvalue: 10
+      selectedImg: {
+        [APIVersion.ORIG]: logo_original,
+        [APIVersion.TRAITOR_SOUL]: logo_tts,
+      },
+      gameVersionId: {
+        [APIVersion.ORIG]: "246840",
+        [APIVersion.TRAITOR_SOUL]: "303680",
+      }
     };
   },
   components: { CharacterForm }

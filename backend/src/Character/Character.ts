@@ -3,6 +3,7 @@ import { SpellList, SpellListKeys } from "./SpellList";
 import { LvlStats, LvlStatKeys } from "./LvlStats";
 import { BufferOffsets, } from "./BufferHelpers";
 import { BasicStats, BasicStatsDataType, DataType, FirstChunkKeys, SecondChunkKeys } from "./BasicStats";
+import { GameVersion, VersionOffset } from "./GameVersion";
 
 const SPELL_SLOTS = 6 as const;
 const PLAYER_STRING_BUFFER = Buffer.from("PLAYER", "utf-8");
@@ -69,7 +70,7 @@ export class Character implements BasicStats, LvlStats, SkillSet {
     runningSpeed: number;
     gold: number;
 
-    constructor(buff: Buffer) {
+    constructor(buff: Buffer, version: GameVersion) {
         let stringSize: number;
         this.buffer = buff.subarray(0, buff.length);
 
@@ -77,7 +78,7 @@ export class Character implements BasicStats, LvlStats, SkillSet {
         let offset = buff.indexOf(PLAYER_STRING_BUFFER) + PLAYER_STRING_BUFFER.length;
 
         // TODO read this stuff
-        offset += 107; // 107 bytes of player stats (time played, times gambled etc)
+        offset += VersionOffset[version]; // 107 bytes of player stats (time played, times gambled etc)
 
         // player name
         stringSize = buff.readInt16LE(offset);

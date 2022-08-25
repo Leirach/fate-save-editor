@@ -3,6 +3,7 @@ import type { ICharacter } from '@/models/Character.model';
 import { LvlStatKeys, type LvlStats } from '@/models/LvlStats.model';
 import { SkillSetKeys, type SkillSet } from '@/models/SkillSet.model';
 import axios, { type AxiosResponse } from 'axios';
+import { APIVersion } from './constants';
 
 
 export interface ModifyRequest {
@@ -29,6 +30,8 @@ export class CharacterApiService {
 
     loading: boolean = false;
 
+    gameVersion = APIVersion.ORIG;
+
     async getCharacterData(buffer?: Uint8Array) {
         try {
             this.loading = true;
@@ -37,7 +40,7 @@ export class CharacterApiService {
                 res = await axios.get(this.API_URL + '/savefile/demo');
             }
             else {
-                res = await axios.post(this.API_URL + '/savefile/parse', buffer, {
+                res = await axios.post(this.API_URL + `/savefile/${this.gameVersion}/parse`, buffer, {
                     headers: { "Content-Type": "application/octet-stream" }
                 });
             }
@@ -91,7 +94,7 @@ export class CharacterApiService {
                 }
             }
 
-            const res = await axios.post(this.API_URL + '/savefile/modify', updateData, {
+            const res = await axios.post(this.API_URL + `/savefile/${this.gameVersion}/modify`, updateData, {
                 headers: { "Content-Type": "application/json" },
                 responseType: 'blob'
             });
