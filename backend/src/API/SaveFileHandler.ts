@@ -14,8 +14,9 @@ export const SaveFileRouter = express.Router();
 SaveFileRouter.post('/savefile/:game/parse', express.raw({ limit: '500kb' }),
     (req: express.Request, res: express.Response) => {
         const version = VersionMap[req.params.game];
-        if (!version) {
-            return res.send(404);
+        // fell victim to one of the classic javascript blunders
+        if (version === undefined) {
+            return res.sendStatus(404);
         }
 
         const buff = req.body as Buffer;
