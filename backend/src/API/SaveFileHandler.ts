@@ -33,7 +33,7 @@ interface SaveFileModifyRequest extends IUpdateParams {
 SaveFileRouter.post('/savefile/:game/modify', express.json({ limit: '500kb' }),
     (req: express.Request, res: express.Response) => {
         const version = VersionMap[req.params.game];
-        if (!version) {
+        if (version === undefined) {
             return res.send(404);
         }
 
