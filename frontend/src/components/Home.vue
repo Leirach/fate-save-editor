@@ -1,4 +1,8 @@
 <template>
+  <main>
+  <div class="header d-flex justify-center">
+    <v-alert type="error">We moved! Please visit: <a href="https://fate-save-editor.onrender.com">https://fate-save-editor.onrender.com</a> - The heroku url will be inaccessible by 28/11/2022</v-alert>
+  </div>
   <div class="header d-flex justify-center">
     <img class="img-container" :src="selectedImg[characterService.gameVersion]">
   </div>
@@ -41,6 +45,7 @@
       </v-col>
     </div>
   </v-container>
+  </main>
 </template>
 
 <script lang="ts">
@@ -132,5 +137,9 @@ export default defineComponent({
 
 .cursor input {
   cursor: pointer;
+}
+
+a{
+  color: blue;
 }
 </style>
