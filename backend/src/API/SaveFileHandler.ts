@@ -11,7 +11,7 @@ const VersionMap: { [key: string]: GameVersion } = {
 
 export const SaveFileRouter = express.Router();
 
-SaveFileRouter.post('/savefile/:game/parse', express.raw({ limit: '500kb' }),
+SaveFileRouter.post('/savefile/:game/parse', express.raw({ limit: '2mb' }),
     (req: express.Request, res: express.Response) => {
         const version = VersionMap[req.params.game];
         // fell victim to one of the classic javascript blunders
@@ -30,7 +30,7 @@ interface SaveFileModifyRequest extends IUpdateParams {
     buffer: string;
 }
 
-SaveFileRouter.post('/savefile/:game/modify', express.json({ limit: '500kb' }),
+SaveFileRouter.post('/savefile/:game/modify', express.json({ limit: '2mb' }),
     (req: express.Request, res: express.Response) => {
         const version = VersionMap[req.params.game];
         if (version === undefined) {
